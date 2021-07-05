@@ -16,6 +16,11 @@ import numpy as np
 import streamlit as st
 import pandas as pd
 import numpy as np
+import streamlit as st
+import plotly.graph_objects as go
+from plotly import tools
+import plotly.offline as py
+import plotly.express as px
 import plotly.figure_factory as ff
 import matplotlib.pyplot as plt
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -60,20 +65,6 @@ transaction = load_data(1000)
 #meal_data = load_meal_data(1000)
 
 
-#altaire
-
-with st.echo(code_location='below'):
-    import altair as alt
-
-    st.write(alt.Chart(transaction).mark_point().encode(
-        # The notation below is shorthand for:
-        # x = alt.X("Acceleration", type="quantitative", title="Acceleration"),
-        x="fraud",
-
-        y=alt.Y("amount", type="quantitative", title="amount fraud quantitative"),
-    ))
-
-
 
 
 
@@ -85,11 +76,11 @@ with st.echo(code_location='below'):
 
 
 #WeeklyDemand Data
-st.subheader('transactions')
-st.write(transaction)
-df = pd.DataFrame(transaction[:1000], columns = ['id'])
-df.hist()
-st.pyplot()
+#st.subheader('transactions')
+#st.write(transaction)
+#df = pd.DataFrame(transaction[:1000], columns = ['amount'])
+#df.hist()
+#st.pyplot()
 
 
 
@@ -97,76 +88,93 @@ st.pyplot()
 
 
 # Value count of target values
-if st.checkbox("Show Pie Chart and Value Counts of Target Columns"):
+if st.checkbox("Show Pie Chart and Value Counts of Target fraud"):
   st.write(transaction.iloc[:,-1].value_counts().plot.pie(autopct="%1.1f%%"))
   st.pyplot()
   st.write(transaction.iloc[:,-1].value_counts())
 
 
 
-
-    # Correlation plot of dataset
-if st.checkbox("Show Correlation Plot"):
-  st.write("### Heatmap")
-  fig, ax = plt.subplots(figsize=(10,10))
-  st.write(sns.heatmap(transaction.corr(), annot=True,linewidths=0.5))
-  st.pyplot()
-
+#st.subheader('transactions')
+#fig1 = px.pie(transaction, values=transaction.fraud, names=transaction.ip_country, color=transaction.ip_country,
+#color_discrete_map={'Sendo':'cyan', 'Tiki':'royalblue','Shopee':'darkblue'})
+#fig1.update_layout(
+#title="<b>Pourcentage de revenus entre les pays concernés </b>")
+#st.plotly_chart(fig1)
 
 
 
+fig = px.histogram(transaction, x="amount")
+fig.update_layout(
+title="<b>Distribution des sommes de transactions</b>")
+st.plotly_chart(fig)
 
 
-if st.checkbox("card type fraud "):
-  st.write("###")
-  fig, ax = plt.subplots(figsize=(10,10))
-  st.write(sns.barplot(x='card_type', y='fraud', data=transaction))
-  st.pyplot()
+fig4 = px.histogram(transaction, x="site_name")
+fig4.update_layout(
+title="<b>Pourcentage les site internets avec le plus de transactions </b>")
+st.plotly_chart(fig4)
+
+# Here we use a column with categorical data
+fig2 = px.histogram(transaction, x="site_name", y= "fraud")
+fig2.update_layout(
+title="<b>Les sites internet les plus fraudés </b>")
+st.plotly_chart(fig2)
+
+fig5 = px.histogram(transaction, x="amount", color="ip_country")
+fig5.update_layout(
+title="<b>Les pays qui font le plus de transactions </b>")
+st.plotly_chart(fig5)
 
 
 
-if st.checkbox("DISTRIBTION FRAUD EN LEGITIME"):
-  st.write("### test")
-  fig, ax = plt.subplots(figsize=(10,10))
-  st.write(sns.stripplot(x=transaction["reference"], y=transaction['fraud'].astype('category'),
-             palette=['#bcbddc','#756bb1']))
-  st.pyplot()
+fig6 = px.scatter_matrix(transaction)
+fig6.update_layout(
+title="<b> Observation de la matrice des transactions </b>")
+st.plotly_chart(fig6)
+
+
+fig7 = px.scatter_matrix(transaction,
+    dimensions=["client_id", "site_name", "card_type", "reference","ip_country","amount"],
+    color="fraud")
+st.plotly_chart(fig7)
+
+fig8 = px.density_contour(transaction, x="amount", y="fraud")
+fig8.update_traces(contours_coloring="fill", contours_showlabels = True)
+fig8.update_layout(
+title="<b> Densité contours  </b>")
+st.plotly_chart(fig8)
 
 
 
-if st.checkbox("DISTRIBTION TRANSACTION"):
-  st.write("### Country distribution")
-  fig, ax = plt.subplots(figsize=(10,10))
-  st.write(sns.distplot(transaction.ip_country, color='#756bb1'))
-  st.pyplot()
 
 
 
 import streamlit.components.v1 as components
-st.title('Streamlit Components')
-components.html(
-  """
+#st.title('Streamlit Components')
+#components.html(
+  #"""
      
-    <div class="container">
-  <h2>HackerShrine</h2>
+    #<div class="container">
+  #<h2>HackerShrine</h2>
  
-    <div class="card" style="width:400px">
+   # <div class="card" style="width:400px">
      
-    <div class="card-body ">
-      <form action="/upload" method="post" enctype="multipart/form-data">
-      <p class="card-text">Custom HTML </p>
-        <input type="file" name="file" value="file">
-        <hr>
-      <input type="submit" name="upload" value="Upload" class="btn btn-success">
-      </form>
+    #<div class="card-body ">
+      #<form action="/upload" method="post" enctype="multipart/form-data">
+      #<p class="card-text">Custom HTML </p>
+      #  <input type="file" name="file" value="file">
+      #  <hr>
+      #<input type="submit" name="upload" value="Upload" class="btn btn-success">
+      #</form>
      
-    </div>
-  </div>
-  <br>
-</div>
- , """,
-    height=600,
-)
+    #</div>
+  #</div>
+  #<br>
+#</div>
+ #, #""",
+    #height=600,
+##)
 
 
 
