@@ -41,6 +41,7 @@ def load_data(nrows):
     col = db.collec1
     data = pd.DataFrame(list(col.find()))
     data = data.drop(columns=["_id"])
+    data = data.dropna()
     data =  shuffle(data, random_state=42)
     data = data.iloc[0:1000]
     # Convert integer valued (numeric) columns to floating point
