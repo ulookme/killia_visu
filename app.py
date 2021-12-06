@@ -36,7 +36,7 @@ st.title(' TRANSACTION FRAUD ANALYSE')
 
 @st.cache
 def load_data(nrows):
-    client = pymongo.MongoClient("mongodb+srv://transac:Mhajjar3@cluster0.hskyz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+    client = pymongo.MongoClient("mongodb+srv://transac:*****@cluster0.hskyz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
     db = client.transaction
     col = db.collec1
     data = pd.DataFrame(list(col.find()))
